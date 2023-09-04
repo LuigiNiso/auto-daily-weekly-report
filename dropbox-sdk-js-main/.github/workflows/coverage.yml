@@ -1,0 +1,62 @@
+name: CodeCov
+on:
+  push:
+    branches: 
+      - main
+  pull_request:
+  schedule:
+    - cron: 0 0 * * *
+
+jobs:
+  Unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: '14'
+      - name: Install SDK
+        run: |
+          npm install
+      - name: Generate Unit Test Coverage
+        run: |
+          npm run coverage:unit
+      - name: Publish Coverage
+        uses: codecov/codecov-action@v1.5.0
+        with:
+          flags: unit
+          fail_ci_if_error: true
+  Integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: '14'
+      - name: Install SDK
+        run: |
+          npm install
+      - name: Generate Integration Test Coverage
+        env:
+          LEGACY_USER_DROPBOX_TOKEN: ${{ secrets.LEGACY_USER_DROPBOX_TOKEN }}
+          LEGACY_USER_CLIENT_ID: ${{ secrets.LEGACY_USER_CLIENT_ID }}
+          LEGACY_USER_CLIENT_SECRET: ${{ secrets.LEGACY_USER_CLIENT_SECRET }}
+          LEGACY_USER_REFRESH_TOKEN: ${{ secrets.LEGACY_USER_REFRESH_TOKEN }}
+          SCOPED_USER_DROPBOX_TOKEN: ${{ secrets.SCOPED_USER_DROPBOX_TOKEN }}
+          SCOPED_USER_CLIENT_ID: ${{ secrets.SCOPED_USER_CLIENT_ID }}
+          SCOPED_USER_CLIENT_SECRET: ${{ secrets.SCOPED_USER_CLIENT_SECRET }}
+          SCOPED_USER_REFRESH_TOKEN: ${{ secrets.SCOPED_USER_REFRESH_TOKEN }}
+          SCOPED_TEAM_DROPBOX_TOKEN: ${{ secrets.SCOPED_TEAM_DROPBOX_TOKEN }}
+          SCOPED_TEAM_CLIENT_ID: ${{ secrets.SCOPED_TEAM_CLIENT_ID }}
+          SCOPED_TEAM_CLIENT_SECRET: ${{ secrets.SCOPED_TEAM_CLIENT_SECRET }}
+          SCOPED_TEAM_REFRESH_TOKEN: ${{ secrets.SCOPED_TEAM_REFRESH_TOKEN }}
+          DROPBOX_SHARED_LINK: ${{ secrets.DROPBOX_SHARED_LINK }}
+        run: |
+          npm run coverage:integration
+      - name: Publish Coverage
+        uses: codecov/codecov-action@v1.5.0
+        with:
+          flags: integration
+          fail_ci_if_error: true

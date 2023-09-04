@@ -1,30 +1,15 @@
-// Replace 'YOUR_ACCESS_TOKEN' with your Dropbox access token
-const accessToken = 'sl.BlYiNok4q9CQD8JNHI7usSP6xbqe6mfd_giU3cQOSOGbv37A2T9An83qcy-5B7GPyOWznbH38fKklZ3r_-s_D-YpZ5LTpU26MXuLa2IRYNMgeqD5mTWDv6N5jQ5CA_f-UMP13u0MppFv';
+// Initialize the Dropbox object with your access token
+const dropbox = new Dropbox.Dropbox({ accessToken: 'sl.BlYiNok4q9CQD8JNHI7usSP6xbqe6mfd_giU3cQOSOGbv37A2T9An83qcy-5B7GPyOWznbH38fKklZ3r_-s_D-YpZ5LTpU26MXuLa2IRYNMgeqD5mTWDv6N5jQ5CA_f-UMP13u0MppFv' });
 
 // Specify the file you want to read
-const filePath = '/txt.txt';
+const filePath = 'txt.txt';
 
 // Make an API request to get the file content
-axios({
-  method: 'get',
-  url: `https://content.dropboxapi.com/2/files/download`,
-  headers: {
-    'Authorization': `Bearer ${accessToken}`,
-    'Dropbox-API-Arg': JSON.stringify({ path: filePath }),
-  },
-  responseType: 'blob', // Receive the response as a blob
-})
+dropbox.filesDownload({ path: filePath })
   .then(response => {
-    const fileContent = response.data; // Blob containing file content
-
-    // Handle the file content as needed (e.g., display it)
-    const reader = new FileReader();
-    reader.onload = function(event) {
-      const content = event.target.result;
-      console.log(content); // Display the content in the console
-      // You can also display the content on your webpage or manipulate it as needed
-    };
-    reader.readAsText(fileContent);
+    // Read and handle the file content
+    const fileContent = response.fileBlob;
+    // Your code to process the content goes here
   })
   .catch(error => {
     console.error(error);
